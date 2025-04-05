@@ -100,6 +100,17 @@ int Mouse::findLeastVisitedDirection() {
 }
 
 void Mouse::move() {
+    // Find the least visited accessible cell
+    int leastVisitedDir = findLeastVisitedDirection();
+    
+    // If we found a direction with least visited cell, go there
+    if (leastVisitedDir != -1) {
+        direction = leastVisitedDir;
+        updateSensors();
+        moveForward();
+        return;
+    }
+
     // Get smell intensity
     double smellIntensity = smell->detect();
     
@@ -144,17 +155,6 @@ void Mouse::move() {
             moveForward();
             return;
         }
-    }
-    
-    // Find the least visited accessible cell
-    int leastVisitedDir = findLeastVisitedDirection();
-    
-    // If we found a direction with least visited cell, go there
-    if (leastVisitedDir != -1) {
-        direction = leastVisitedDir;
-        updateSensors();
-        moveForward();
-        return;
     }
     
     // Default to wall-following if other approaches don't work
