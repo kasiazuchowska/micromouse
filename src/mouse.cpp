@@ -60,40 +60,43 @@ void Mouse::moveForward() {
     }
 }
 
-// Check if a move in a given direction leads to a less visited cell
-bool Mouse::isLessVisitedDirection(int dir) {
-    // Store original direction
+// Check which direction leads to the least visited cell
+int Mouse::findLeastVisitedDirection() {
+    int leastVisitedDir = -1;
+    int minVisitCount = 1000;
     int originalDir = direction;
     
-    // Set new direction
-    direction = dir;
-    updateSensors();
-    
-    if (canMoveForward()) {
-        // Get the potential new position
-        int dx = 0, dy = 0;
-        switch (direction) {
-            case 0: dy = -1; break; // up
-            case 1: dx = 1; break;  // right
-            case 2: dy = 1; break;  // down
-            case 3: dx = -1; break; // left
-        }
-        
-        int newX = x + dx;
-        int newY = y + dy;
-        
-        // Restore original direction
-        direction = originalDir;
+    // Check each direction
+    for (int dir = 0; dir < 4; dir++) {
+        direction = dir;
         updateSensors();
         
-        // Check if the new position is less visited
-        return visited[newY][newX] < visited[y][x];
+        if (canMoveForward()) {
+            // Calculate the new position
+            int dx = 0, dy = 0;
+            switch (direction) {
+                case 0: dy = -1; break; // up
+                case 1: dx = 1; break;  // right
+                case 2: dy = 1; break;  // down
+                case 3: dx = -1; break; // left
+            }
+            
+            int newX = x + dx;
+            int newY = y + dy;
+            
+            // If this cell has been visited fewer times than our current minimum
+            if (visited[newY][newX] < minVisitCount) {
+                minVisitCount = visited[newY][newX];
+                leastVisitedDir = dir;
+            }
+        }
     }
     
-    // Restore original direction and return false if can't move
+    // Restore original direction
     direction = originalDir;
     updateSensors();
-    return false;
+    
+    return leastVisitedDir;
 }
 
 void Mouse::move() {
@@ -143,49 +146,15 @@ void Mouse::move() {
         }
     }
     
-    // Check if we're stuck in a cell we've visited multiple times
-    if (visited[y][x] > 2) {
-        // Look for any direction that leads to a less visited cell
-        bool foundLessVisited = false;
-        
-        // Try each direction to find a less visited cell
-        for (int i = 0; i < 4; i++) {
-            if (isLessVisitedDirection(i)) {
-                direction = i;
-                updateSensors();
-                moveForward();
-                foundLessVisited = true;
-                break;
-            }
-        }
-        
-        // If we found a less visited direction, we're done
-        if (foundLessVisited) {
-            return;
-        }
-        
-        // If no less visited cell was found, make a random choice to break out of loops
-        std::vector<int> possibleDirs;
-        for (int i = 0; i < 4; i++) {
-            direction = i;
-            updateSensors();
-            if (canMoveForward()) {
-                possibleDirs.push_back(i);
-            }
-        }
-        
-        if (!possibleDirs.empty()) {
-            // Choose a random valid direction
-            std::random_device rd;
-            std::mt19937 gen(rd());
-            std::uniform_int_distribution<> distrib(0, possibleDirs.size() - 1);
-            int randomIndex = distrib(gen);
-            
-            direction = possibleDirs[randomIndex];
-            updateSensors();
-            moveForward();
-            return;
-        }
+    // Find the least visited accessible cell
+    int leastVisitedDir = findLeastVisitedDirection();
+    
+    // If we found a direction with least visited cell, go there
+    if (leastVisitedDir != -1) {
+        direction = leastVisitedDir;
+        updateSensors();
+        moveForward();
+        return;
     }
     
     // Default to wall-following if other approaches don't work

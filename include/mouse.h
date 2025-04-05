@@ -39,7 +39,7 @@ private:
     void turnLeft();
     void turnRight();
     void moveForward();
-    bool isLessVisitedDirection(int dir);
+    int findLeastVisitedDirection();
 };
 
 #endif // MOUSE_H
