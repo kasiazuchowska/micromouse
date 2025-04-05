@@ -7,7 +7,7 @@
 class CellView : public QWidget {
 public:
     CellView(QWidget* parent = nullptr) 
-        : QWidget(parent), isWall(false), isGoal(false), isMouse(false), isVisited(false) {
+        : QWidget(parent), isWall(false), isGoal(false), isMouse(false), visitCount(0) {
         setMinimumSize(20, 20);
         setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     }
@@ -15,7 +15,7 @@ public:
     void setWall(bool value) { isWall = value; update(); }
     void setGoal(bool value) { isGoal = value; update(); }
     void setMouse(bool value) { isMouse = value; update(); }
-    void setVisited(bool value) { isVisited = value; update(); }
+    void setVisitCount(int count) { visitCount = count; update(); }
     
 protected:
     void paintEvent(QPaintEvent* event) override {
@@ -27,21 +27,30 @@ protected:
             painter.fillRect(rect(), Qt::green);
         } else if (isMouse) {
             painter.fillRect(rect(), Qt::red);
-        } else if (isVisited) {
-            painter.fillRect(rect(), QColor(200, 200, 255));
+        } else if (visitCount > 0) {
+            // Create a gradient of blue based on visit count
+            // More visits = darker blue
+            int intensity = std::max(255 - (visitCount * 30), 100); // Don't go too dark
+            painter.fillRect(rect(), QColor(intensity, intensity, 255));
         } else {
             painter.fillRect(rect(), Qt::white);
         }
         
         painter.setPen(Qt::gray);
         painter.drawRect(rect().adjusted(0, 0, -1, -1));
+        
+        // Optionally show visit count as text for cells visited more than once
+        if (visitCount > 1) {
+            painter.setPen(Qt::black);
+            painter.drawText(rect(), Qt::AlignCenter, QString::number(visitCount));
+        }
     }
     
 private:
     bool isWall;
     bool isGoal;
     bool isMouse;
-    bool isVisited;
+    int visitCount;
 };
 
 UI::UI(Game* game, QWidget* parent)
@@ -124,7 +133,13 @@ void UI::render() {
             cellView->setWall(cell->isObstacle);
             cellView->setGoal(cell->isGoal);
             cellView->setMouse(x == mouseX && y == mouseY);
-            cellView->setVisited(y < visited.size() && x < visited[y].size() && visited[y][x]);
+            
+            // Set visit count (instead of boolean visited state)
+            int visitCount = 0;
+            if (y < visited.size() && x < visited[y].size()) {
+                visitCount = visited[y][x];
+            }
+            cellView->setVisitCount(visitCount);
         }
     }
 }

@@ -13,8 +13,8 @@ public:
     ~Mouse();
     
     void move();
-    int getX()const{return y;}
-    int getY()const{return x;}
+    int getX()const{return x;}
+    int getY()const{return y;}
     int getDirection() const { return direction; }
     const std::vector<std::vector<int>>& getVisited() const { return visited; }
     
@@ -30,14 +30,8 @@ private:
     // Reference to the grid
     Grid* grid;
     
-    // Updated to track visit count instead of just visited/not visited
+        // Track visit counts instead of just visited/not visited
     std::vector<std::vector<int>> visited;
-    
-    // Track deadends to avoid revisiting them
-    std::vector<std::vector<bool>> deadends;
-    
-    // Path history to help with backtracking
-    std::vector<std::pair<int, int>> pathHistory;
     
     // Helper methods
     void updateSensors();
@@ -45,11 +39,7 @@ private:
     void turnLeft();
     void turnRight();
     void moveForward();
-    
-    // New methods for improved navigation
-    std::vector<std::pair<int, int>> getValidNeighbors(int cellX, int cellY);
-    std::pair<int, int> findLeastVisitedNeighbor();
-    std::vector<std::pair<int, int>> findPathToLeastVisited();
+    bool isLessVisitedDirection(int dir);
 };
 
 #endif // MOUSE_H

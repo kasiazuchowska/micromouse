@@ -10,27 +10,14 @@ Mouse::Mouse(Grid* grid, int startX, int startY)
     // Initialize visited array
     visited.resize(grid->getHeight());
     for (int y = 0; y < grid->getHeight(); ++y) {
-        visited[y].resize(grid->getWidth(), 0);  // Changed to int for visit count
+        visited[y].resize(grid->getWidth(), 0);  // Track visit count instead of just true/false
     }
     
     // Mark starting position as visited
     visited[y][x] = 1;
     
-    // Initialize path history
-    pathHistory.push_back({x, y});
-    
     // Initialize sensors
     updateSensors();
-    
-    // Store the maze size
-    width = grid->getWidth();
-    height = grid->getHeight();
-    
-    // Initialize deadends map
-    deadends.resize(height);
-    for (int y = 0; y < height; ++y) {
-        deadends[y].resize(width, false);
-    }
 }
 
 Mouse::~Mouse() {
@@ -69,160 +56,52 @@ void Mouse::moveForward() {
         x += dx;
         y += dy;
         visited[y][x]++; // Increment visit count
-        pathHistory.push_back({x, y});
-        
-        // If we've visited this cell too many times, mark it as potentially problematic
-        if (visited[y][x] > 3) {
-            deadends[y][x] = true;
-        }
-        
         updateSensors();
     }
 }
 
-// Get neighboring cells that are valid moves
-std::vector<std::pair<int, int>> Mouse::getValidNeighbors(int cellX, int cellY) {
-    std::vector<std::pair<int, int>> neighbors;
+// Check if a move in a given direction leads to a less visited cell
+bool Mouse::isLessVisitedDirection(int dir) {
+    // Store original direction
+    int originalDir = direction;
     
-    // Check all four directions
-    const int dx[4] = {0, 1, 0, -1};
-    const int dy[4] = {-1, 0, 1, 0}; // up, right, down, left
-    
-    for (int i = 0; i < 4; i++) {
-        int newX = cellX + dx[i];
-        int newY = cellY + dy[i];
-        
-        // Check if it's within bounds
-        if (newX >= 0 && newX < width && newY >= 0 && newY < height) {
-            // Need to check if there's a wall - simulate vision sensor
-            int tempDir = i;
-            direction = tempDir;
-            updateSensors();
-            
-            if (canMoveForward()) {
-                neighbors.push_back({newX, newY});
-            }
-        }
-    }
-    
-    // Restore direction and sensors
+    // Set new direction
+    direction = dir;
     updateSensors();
     
-    return neighbors;
-}
-
-// New method: Find least visited neighbor
-std::pair<int, int> Mouse::findLeastVisitedNeighbor() {
-    std::vector<std::pair<int, int>> neighbors = getValidNeighbors(x, y);
-    std::pair<int, int> leastVisited = {-1, -1};
-    int minVisits = std::numeric_limits<int>::max();
-    
-    for (const auto& neighbor : neighbors) {
-        int nx = neighbor.first;
-        int ny = neighbor.second;
-        
-        // Skip deadends
-        if (deadends[ny][nx]) continue;
-        
-        if (visited[ny][nx] < minVisits) {
-            minVisits = visited[ny][nx];
-            leastVisited = neighbor;
-        }
-    }
-    
-    return leastVisited;
-}
-
-// New method: A* pathfinding to backtrack to unexplored areas
-std::vector<std::pair<int, int>> Mouse::findPathToLeastVisited() {
-    // Priority queue for A* search
-    std::priority_queue<std::tuple<int, int, int>, 
-                        std::vector<std::tuple<int, int, int>>, 
-                        std::greater<std::tuple<int, int, int>>> pq;
-    
-    // Maps for parent nodes and costs
-    std::vector<std::vector<std::pair<int, int>>> parent(height, 
-                                                        std::vector<std::pair<int, int>>(width, {-1, -1}));
-    std::vector<std::vector<int>> gScore(height, std::vector<int>(width, std::numeric_limits<int>::max()));
-    
-    // Find the least visited cell in the entire maze
-    std::pair<int, int> target = {-1, -1};
-    int minVisits = std::numeric_limits<int>::max();
-    
-    for (int y = 0; y < height; ++y) {
-        for (int x = 0; x < width; ++x) {
-            // Check if this cell is accessible and not a deadend
-            if (!deadends[y][x] && visited[y][x] > 0 && visited[y][x] < minVisits) {
-                std::vector<std::pair<int, int>> neighbors = getValidNeighbors(x, y);
-                for (const auto& neigh : neighbors) {
-                    if (visited[neigh.second][neigh.first] == 0) {
-                        minVisits = visited[y][x];
-                        target = {x, y};
-                        break;
-                    }
-                }
-            }
-        }
-    }
-    
-    // If no target found, return empty path
-    if (target.first == -1 || (target.first == x && target.second == y)) {
-        return {};
-    }
-    
-    // Start A* search
-    pq.push({0, x, y});
-    gScore[y][x] = 0;
-    
-    while (!pq.empty()) {
-        auto [cost, curX, curY] = pq.top();
-        pq.pop();
-        
-        if (curX == target.first && curY == target.second) {
-            // Reconstruct path
-            std::vector<std::pair<int, int>> path;
-            std::pair<int, int> current = target;
-            
-            while (current.first != -1 && current.second != -1) {
-                path.push_back(current);
-                current = parent[current.second][current.first];
-            }
-            
-            std::reverse(path.begin(), path.end());
-            return path;
+    if (canMoveForward()) {
+        // Get the potential new position
+        int dx = 0, dy = 0;
+        switch (direction) {
+            case 0: dy = -1; break; // up
+            case 1: dx = 1; break;  // right
+            case 2: dy = 1; break;  // down
+            case 3: dx = -1; break; // left
         }
         
-        std::vector<std::pair<int, int>> neighbors = getValidNeighbors(curX, curY);
+        int newX = x + dx;
+        int newY = y + dy;
         
-        for (const auto& neighbor : neighbors) {
-            int nx = neighbor.first;
-            int ny = neighbor.second;
-            
-            // Skip deadends
-            if (deadends[ny][nx]) continue;
-            
-            int newCost = gScore[curY][curX] + 1 + visited[ny][nx];
-            
-            if (newCost < gScore[ny][nx]) {
-                parent[ny][nx] = {curX, curY};
-                gScore[ny][nx] = newCost;
-                
-                // Heuristic: Manhattan distance
-                int h = std::abs(nx - target.first) + std::abs(ny - target.second);
-                pq.push({newCost + h, nx, ny});
-            }
-        }
+        // Restore original direction
+        direction = originalDir;
+        updateSensors();
+        
+        // Check if the new position is less visited
+        return visited[newY][newX] < visited[y][x];
     }
     
-    return {}; // No path found
+    // Restore original direction and return false if can't move
+    direction = originalDir;
+    updateSensors();
+    return false;
 }
 
 void Mouse::move() {
-    // Get smell intensity to see if we're close to the goal
+    // Get smell intensity
     double smellIntensity = smell->detect();
     
-    // If near the goal, prioritize smell-based navigation
-    if (smellIntensity > 0.8) {
+    // If smell is strong enough, try to move towards the goal
+    if (smellIntensity > 0.3) {
         int originalDirection = direction;
         double bestSmell = 0.0;
         int bestDirection = -1;
@@ -240,15 +119,13 @@ void Mouse::move() {
                     case 3: dx = -1; break; // left
                 }
                 
-                // Only consider cells that aren't marked as dead ends
-                if (!deadends[y + dy][x + dx]) {
-                    SmellSense tempSmell(grid, x + dx, y + dy);
-                    double newSmell = tempSmell.detect();
-                    
-                    if (newSmell > bestSmell) {
-                        bestSmell = newSmell;
-                        bestDirection = i;
-                    }
+                // Check smell at potential new position
+                SmellSense tempSmell(grid, x + dx, y + dy);
+                double newSmell = tempSmell.detect();
+                
+                if (newSmell > bestSmell) {
+                    bestSmell = newSmell;
+                    bestDirection = i;
                 }
             }
         }
@@ -266,156 +143,71 @@ void Mouse::move() {
         }
     }
     
-    // Check if we're in a high visit count area (potential loop)
+    // Check if we're stuck in a cell we've visited multiple times
     if (visited[y][x] > 2) {
-        // Try to find least visited neighbor first
-        auto leastVisited = findLeastVisitedNeighbor();
+        // Look for any direction that leads to a less visited cell
+        bool foundLessVisited = false;
         
-        if (leastVisited.first != -1) {
-            // Navigate to least visited neighbor
-            int targetX = leastVisited.first;
-            int targetY = leastVisited.second;
-            
-            // Figure out which direction to turn
-            int dx = targetX - x;
-            int dy = targetY - y;
-            int targetDir;
-            
-            if (dx == 1) targetDir = 1;      // right
-            else if (dx == -1) targetDir = 3; // left
-            else if (dy == -1) targetDir = 0; // up
-            else targetDir = 2;              // down
-            
-            // Turn until we face the right direction
-            while (direction != targetDir) {
-                turnRight();
-            }
-            
-            moveForward();
-            return;
-        } else {
-            // No good neighbor, try to find path to unexplored areas
-            auto path = findPathToLeastVisited();
-            
-            if (!path.empty() && path.size() > 1) {
-                // Take the first step of the path
-                int targetX = path[1].first;
-                int targetY = path[1].second;
-                
-                // Figure out which direction to turn
-                int dx = targetX - x;
-                int dy = targetY - y;
-                int targetDir;
-                
-                if (dx == 1) targetDir = 1;      // right
-                else if (dx == -1) targetDir = 3; // left
-                else if (dy == -1) targetDir = 0; // up
-                else targetDir = 2;              // down
-                
-                // Turn until we face the right direction
-                while (direction != targetDir) {
-                    turnRight();
-                }
-                
+        // Try each direction to find a less visited cell
+        for (int i = 0; i < 4; i++) {
+            if (isLessVisitedDirection(i)) {
+                direction = i;
+                updateSensors();
                 moveForward();
-                return;
+                foundLessVisited = true;
+                break;
             }
         }
-    }
-    
-    // If all else fails, use modified wall-following that avoids visited areas
-    std::vector<int> possibleDirs;
-    int originalDir = direction;
-    
-    // Check right turn first (preferred in wall-following)
-    turnRight();
-    if (canMoveForward()) {
-        int dx = 0, dy = 0;
-        switch (direction) {
-            case 0: dy = -1; break; // up
-            case 1: dx = 1; break;  // right
-            case 2: dy = 1; break;  // down
-            case 3: dx = -1; break; // left
+        
+        // If we found a less visited direction, we're done
+        if (foundLessVisited) {
+            return;
         }
         
-        // Add to possible directions if not a deadend
-        if (!deadends[y + dy][x + dx]) {
-            possibleDirs.push_back(direction);
-        }
-    }
-    
-    // Check forward
-    direction = originalDir;
-    updateSensors();
-    if (canMoveForward()) {
-        int dx = 0, dy = 0;
-        switch (direction) {
-            case 0: dy = -1; break; // up
-            case 1: dx = 1; break;  // right
-            case 2: dy = 1; break;  // down
-            case 3: dx = -1; break; // left
-        }
-        
-        // Add to possible directions if not a deadend
-        if (!deadends[y + dy][x + dx]) {
-            possibleDirs.push_back(direction);
-        }
-    }
-    
-    // Check left turn
-    turnLeft();
-    if (canMoveForward()) {
-        int dx = 0, dy = 0;
-        switch (direction) {
-            case 0: dy = -1; break; // up
-            case 1: dx = 1; break;  // right
-            case 2: dy = 1; break;  // down
-            case 3: dx = -1; break; // left
-        }
-        
-        // Add to possible directions if not a deadend
-        if (!deadends[y + dy][x + dx]) {
-            possibleDirs.push_back(direction);
-        }
-    }
-    
-    // Restore original direction
-    direction = originalDir;
-    updateSensors();
-    
-    if (!possibleDirs.empty()) {
-        // Choose the direction with the least visits
-        int bestDir = -1;
-        int minVisits = std::numeric_limits<int>::max();
-        
-        for (int dir : possibleDirs) {
-            direction = dir;
+        // If no less visited cell was found, make a random choice to break out of loops
+        std::vector<int> possibleDirs;
+        for (int i = 0; i < 4; i++) {
+            direction = i;
             updateSensors();
-            
             if (canMoveForward()) {
-                int dx = 0, dy = 0;
-                switch (direction) {
-                    case 0: dy = -1; break; // up
-                    case 1: dx = 1; break;  // right
-                    case 2: dy = 1; break;  // down
-                    case 3: dx = -1; break; // left
-                }
-                
-                if (visited[y + dy][x + dx] < minVisits) {
-                    minVisits = visited[y + dy][x + dx];
-                    bestDir = dir;
-                }
+                possibleDirs.push_back(i);
             }
         }
         
-        if (bestDir != -1) {
-            direction = bestDir;
+        if (!possibleDirs.empty()) {
+            // Choose a random valid direction
+            std::random_device rd;
+            std::mt19937 gen(rd());
+            std::uniform_int_distribution<> distrib(0, possibleDirs.size() - 1);
+            int randomIndex = distrib(gen);
+            
+            direction = possibleDirs[randomIndex];
             updateSensors();
             moveForward();
             return;
         }
     }
     
-    // If all fails, resort to basic turn and try again
-    turnLeft();
+    // Default to wall-following if other approaches don't work
+    if (canMoveForward()) {
+        // Can move forward, try turning right first (wall-following logic)
+        turnRight();
+        
+        if (canMoveForward()) {
+            // Can turn right, so do it
+            moveForward();
+        } else {
+            // Can't turn right, go back to forward
+            turnLeft();
+            moveForward();
+        }
+    } else {
+        // Can't move forward, turn left
+        turnLeft();
+        
+        // If we still can't move, turn again
+        if (!canMoveForward()) {
+            turnLeft();
+        }
+    }
 }
