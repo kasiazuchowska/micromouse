@@ -31,3 +31,12 @@ void Grid::setCell(int x, int y, Cell* cell) {
         cells[y][x] = cell;
     }
 }
+
+Cell* Grid::getGoal(){
+    return cells[goalX][goalY];
+}
+
+void Grid::setGoal(int x, int y){
+    this->goalX = x;
+    this->goalY = y;
+}

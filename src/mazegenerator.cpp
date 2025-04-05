@@ -71,6 +71,7 @@ void MazeGenerator::placeGoal(Grid& grid) {
         for (int x = width - 2; x > 0; --x) {
             if (!grid.getCell(x, y)->isObstacle) {
                 grid.setCell(x, y, new Goal(x, y));
+                grid.setGoal(x,y);
                 return;
             }
         }

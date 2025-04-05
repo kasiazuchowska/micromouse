@@ -19,24 +19,24 @@ bool VisionSense::detect() {
 
 double SmellSense::detect() {
     // Find the goal cell
-    int goalX = -1, goalY = -1;
+    Cell* goal = grid->getGoal();
     
     for (int cy = 0; cy < grid->getHeight(); ++cy) {
         for (int cx = 0; cx < grid->getWidth(); ++cx) {
             Cell* cell = grid->getCell(cx, cy);
             if (cell && cell->isGoal) {
-                goalX = cx;
-                goalY = cy;
+                goal->x = cx;
+                goal->y = cy;
                 break;
             }
         }
-        if (goalX != -1) break;
+        if (goal->x != -1) break;
     }
     
-    if (goalX == -1) return 0.0; // No goal found
+    if (goal->x == -1) return 0.0; // No goal found
     
     // Calculate Euclidean distance to goal
-    double distance = std::sqrt(std::pow(x - goalX, 2) + std::pow(y - goalY, 2));
+    double distance = std::sqrt(std::pow(x - goal->x, 2) + std::pow(y - goal->y, 2));
     
     // Convert to smell intensity (closer = stronger)
     double maxDistance = std::sqrt(std::pow(grid->getWidth(), 2) + std::pow(grid->getHeight(), 2));
