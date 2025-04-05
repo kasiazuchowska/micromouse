@@ -1,38 +1,55 @@
 #ifndef MOUSE_H
 #define MOUSE_H
 
-#include "movable.h"
 #include "grid.h"
 #include "sense.h"
-#include <vector>
 #include <memory>
+#include <vector>
+#include <utility>
 
-class Mouse : public Movable {
+class Mouse {
 public:
     Mouse(Grid* grid, int startX, int startY);
     ~Mouse();
     
-    void move() override;
-    
-    int getX() const { return x; }
-    int getY() const { return y; }
+    void move();
+    int getX()const{return y;}
+    int getY()const{return x;}
     int getDirection() const { return direction; }
-    const std::vector<std::vector<bool>>& getVisited() const { return visited; }
+    const std::vector<std::vector<int>>& getVisited() const { return visited; }
     
 private:
+    // Current position and direction
+    int x, y, direction;
+    int width, height;  // Maze dimensions
+    
+    // Sensors
+    std::unique_ptr<VisionSense> vision;
+    std::unique_ptr<SmellSense> smell;
+    
+    // Reference to the grid
     Grid* grid;
-    int x, y;
-    int direction; // 0=up, 1=right, 2=down, 3=left
-    std::vector<std::vector<bool>> visited;
     
-    std::unique_ptr<Sense<bool>> vision;
-    std::unique_ptr<Sense<double>> smell;
+    // Updated to track visit count instead of just visited/not visited
+    std::vector<std::vector<int>> visited;
     
+    // Track deadends to avoid revisiting them
+    std::vector<std::vector<bool>> deadends;
+    
+    // Path history to help with backtracking
+    std::vector<std::pair<int, int>> pathHistory;
+    
+    // Helper methods
     void updateSensors();
     bool canMoveForward();
     void turnLeft();
     void turnRight();
     void moveForward();
+    
+    // New methods for improved navigation
+    std::vector<std::pair<int, int>> getValidNeighbors(int cellX, int cellY);
+    std::pair<int, int> findLeastVisitedNeighbor();
+    std::vector<std::pair<int, int>> findPathToLeastVisited();
 };
 
 #endif // MOUSE_H

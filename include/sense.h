@@ -35,4 +35,4 @@ private:
     int x, y;
 };
 
-#endif // SENSE_H
+#endif

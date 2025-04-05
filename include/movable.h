@@ -7,4 +7,4 @@ public:
     virtual ~Movable() = default;
 };
 
-#endif // MOVABLE_H
+#endif

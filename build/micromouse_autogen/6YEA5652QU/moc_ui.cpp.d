@@ -5,7 +5,6 @@
   /home/katarzyna/studia/micromouse/include/grid.h \
   /home/katarzyna/studia/micromouse/include/mazegenerator.h \
   /home/katarzyna/studia/micromouse/include/mouse.h \
-  /home/katarzyna/studia/micromouse/include/movable.h \
   /home/katarzyna/studia/micromouse/include/sense.h \
   /home/katarzyna/studia/micromouse/include/ui.h \
   /usr/include/asm-generic/errno-base.h \

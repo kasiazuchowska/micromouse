@@ -21,20 +21,6 @@ double SmellSense::detect() {
     // Find the goal cell
     Cell* goal = grid->getGoal();
     
-    for (int cy = 0; cy < grid->getHeight(); ++cy) {
-        for (int cx = 0; cx < grid->getWidth(); ++cx) {
-            Cell* cell = grid->getCell(cx, cy);
-            if (cell && cell->isGoal) {
-                goal->x = cx;
-                goal->y = cy;
-                break;
-            }
-        }
-        if (goal->x != -1) break;
-    }
-    
-    if (goal->x == -1) return 0.0; // No goal found
-    
     // Calculate Euclidean distance to goal
     double distance = std::sqrt(std::pow(x - goal->x, 2) + std::pow(y - goal->y, 2));
     

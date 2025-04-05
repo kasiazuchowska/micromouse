@@ -1277,7 +1277,6 @@ CMakeFiles/micromouse.dir/main.cpp.o: /home/katarzyna/studia/micromouse/main.cpp
   /home/katarzyna/studia/micromouse/include/grid.h \
   /home/katarzyna/studia/micromouse/include/mazegenerator.h \
   /home/katarzyna/studia/micromouse/include/mouse.h \
-  /home/katarzyna/studia/micromouse/include/movable.h \
   /home/katarzyna/studia/micromouse/include/sense.h \
   /home/katarzyna/studia/micromouse/include/ui.h \
   /usr/include/alloca.h \
@@ -1670,7 +1669,6 @@ CMakeFiles/micromouse.dir/micromouse_autogen/mocs_compilation.cpp.o: micromouse_
   /home/katarzyna/studia/micromouse/include/grid.h \
   /home/katarzyna/studia/micromouse/include/mazegenerator.h \
   /home/katarzyna/studia/micromouse/include/mouse.h \
-  /home/katarzyna/studia/micromouse/include/movable.h \
   /home/katarzyna/studia/micromouse/include/sense.h \
   /home/katarzyna/studia/micromouse/include/ui.h \
   micromouse_autogen/6YEA5652QU/moc_game.cpp \
@@ -2054,7 +2052,6 @@ CMakeFiles/micromouse.dir/src/game.cpp.o: /home/katarzyna/studia/micromouse/src/
   /home/katarzyna/studia/micromouse/include/grid.h \
   /home/katarzyna/studia/micromouse/include/mazegenerator.h \
   /home/katarzyna/studia/micromouse/include/mouse.h \
-  /home/katarzyna/studia/micromouse/include/movable.h \
   /home/katarzyna/studia/micromouse/include/sense.h \
   /home/katarzyna/studia/micromouse/include/ui.h \
   /usr/include/alloca.h \
@@ -2705,7 +2702,6 @@ CMakeFiles/micromouse.dir/src/mouse.cpp.o: /home/katarzyna/studia/micromouse/src
   /home/katarzyna/studia/micromouse/include/cell.h \
   /home/katarzyna/studia/micromouse/include/grid.h \
   /home/katarzyna/studia/micromouse/include/mouse.h \
-  /home/katarzyna/studia/micromouse/include/movable.h \
   /home/katarzyna/studia/micromouse/include/sense.h \
   /usr/include/alloca.h \
   /usr/include/asm-generic/errno-base.h \
@@ -2729,6 +2725,7 @@ CMakeFiles/micromouse.dir/src/mouse.cpp.o: /home/katarzyna/studia/micromouse/src
   /usr/include/c++/13/bits/cpp_type_traits.h \
   /usr/include/c++/13/bits/cxxabi_forced.h \
   /usr/include/c++/13/bits/cxxabi_init_exception.h \
+  /usr/include/c++/13/bits/deque.tcc \
   /usr/include/c++/13/bits/exception.h \
   /usr/include/c++/13/bits/exception_defines.h \
   /usr/include/c++/13/bits/exception_ptr.h \
@@ -2760,6 +2757,7 @@ CMakeFiles/micromouse.dir/src/mouse.cpp.o: /home/katarzyna/studia/micromouse/src
   /usr/include/c++/13/bits/stl_algobase.h \
   /usr/include/c++/13/bits/stl_bvector.h \
   /usr/include/c++/13/bits/stl_construct.h \
+  /usr/include/c++/13/bits/stl_deque.h \
   /usr/include/c++/13/bits/stl_function.h \
   /usr/include/c++/13/bits/stl_heap.h \
   /usr/include/c++/13/bits/stl_iterator.h \
@@ -2767,7 +2765,9 @@ CMakeFiles/micromouse.dir/src/mouse.cpp.o: /home/katarzyna/studia/micromouse/src
   /usr/include/c++/13/bits/stl_iterator_base_types.h \
   /usr/include/c++/13/bits/stl_numeric.h \
   /usr/include/c++/13/bits/stl_pair.h \
+  /usr/include/c++/13/bits/stl_queue.h \
   /usr/include/c++/13/bits/stl_raw_storage_iter.h \
+  /usr/include/c++/13/bits/stl_relops.h \
   /usr/include/c++/13/bits/stl_tempbuf.h \
   /usr/include/c++/13/bits/stl_uninitialized.h \
   /usr/include/c++/13/bits/stl_vector.h \
@@ -2790,6 +2790,7 @@ CMakeFiles/micromouse.dir/src/mouse.cpp.o: /home/katarzyna/studia/micromouse/src
   /usr/include/c++/13/cwchar \
   /usr/include/c++/13/debug/assertions.h \
   /usr/include/c++/13/debug/debug.h \
+  /usr/include/c++/13/deque \
   /usr/include/c++/13/exception \
   /usr/include/c++/13/ext/aligned_buffer.h \
   /usr/include/c++/13/ext/alloc_traits.h \
@@ -2809,6 +2810,7 @@ CMakeFiles/micromouse.dir/src/mouse.cpp.o: /home/katarzyna/studia/micromouse/src
   /usr/include/c++/13/pstl/glue_memory_defs.h \
   /usr/include/c++/13/pstl/glue_numeric_defs.h \
   /usr/include/c++/13/pstl/pstl_config.h \
+  /usr/include/c++/13/queue \
   /usr/include/c++/13/random \
   /usr/include/c++/13/string \
   /usr/include/c++/13/string_view \
@@ -2827,6 +2829,7 @@ CMakeFiles/micromouse.dir/src/mouse.cpp.o: /home/katarzyna/studia/micromouse/src
   /usr/include/c++/13/tuple \
   /usr/include/c++/13/type_traits \
   /usr/include/c++/13/typeinfo \
+  /usr/include/c++/13/utility \
   /usr/include/c++/13/vector \
   /usr/include/ctype.h \
   /usr/include/endian.h \
@@ -3067,7 +3070,6 @@ CMakeFiles/micromouse.dir/src/ui.cpp.o: /home/katarzyna/studia/micromouse/src/ui
   /home/katarzyna/studia/micromouse/include/grid.h \
   /home/katarzyna/studia/micromouse/include/mazegenerator.h \
   /home/katarzyna/studia/micromouse/include/mouse.h \
-  /home/katarzyna/studia/micromouse/include/movable.h \
   /home/katarzyna/studia/micromouse/include/sense.h \
   /home/katarzyna/studia/micromouse/include/ui.h \
   /usr/include/alloca.h \
@@ -3456,6 +3458,10 @@ CMakeFiles/micromouse.dir/src/ui.cpp.o: /home/katarzyna/studia/micromouse/src/ui
 /usr/include/x86_64-linux-gnu/qt5/QtGui/qpainter.h:
 
 /usr/include/x86_64-linux-gnu/qt5/QtGui/QPainter:
+
+/usr/include/c++/13/queue:
+
+/usr/include/c++/13/bits/stl_queue.h:
 
 /usr/include/c++/13/deque:
 

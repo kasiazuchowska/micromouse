@@ -261,7 +261,6 @@ CMakeFiles/micromouse.dir/main.cpp.o: \
  /home/katarzyna/studia/micromouse/include/grid.h \
  /home/katarzyna/studia/micromouse/include/cell.h \
  /home/katarzyna/studia/micromouse/include/mouse.h \
- /home/katarzyna/studia/micromouse/include/movable.h \
  /home/katarzyna/studia/micromouse/include/sense.h \
  /usr/include/c++/13/memory \
  /usr/include/c++/13/bits/stl_raw_storage_iter.h \
