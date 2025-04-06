@@ -19,21 +19,16 @@ public:
     const std::vector<std::vector<int>>& getVisited() const { return visited; }
     
 private:
-    // Current position and direction
     int x, y, direction;
-    int width, height;  // Maze dimensions
-    
-    // Sensors
+    int width, height;
+
     std::unique_ptr<VisionSense> vision;
     std::unique_ptr<SmellSense> smell;
-    
-    // Reference to the grid
+
     Grid* grid;
     
-        // Track visit counts instead of just visited/not visited
     std::vector<std::vector<int>> visited;
     
-    // Helper methods
     void updateSensors();
     bool canMoveForward();
     void turnLeft();
@@ -42,4 +37,4 @@ private:
     int findLeastVisitedDirection();
 };
 
-#endif // MOUSE_H
+#endif

@@ -20,7 +20,7 @@ public:
 private:
     Grid* grid;
     int x, y;
-    int direction; // 0=up, 1=right, 2=down, 3=left
+    int direction;
 };
 
 class SmellSense : public Sense<double> {

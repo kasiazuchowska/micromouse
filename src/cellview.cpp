@@ -38,9 +38,7 @@ void CellView::paintEvent(QPaintEvent* event) {
     } else if (isMouse) {
         painter.fillRect(rect(), Qt::red);
     } else if (visitCount > 0) {
-        // Create a gradient of blue based on visit count
-        // More visits = darker blue
-        int intensity = std::max(255 - (visitCount * 30), 100); // Don't go too dark
+        int intensity = std::max(255 - (visitCount * 30), 100);
         painter.fillRect(rect(), QColor(intensity, intensity, 255));
     } else {
         painter.fillRect(rect(), Qt::white);
@@ -49,8 +47,7 @@ void CellView::paintEvent(QPaintEvent* event) {
     painter.setPen(Qt::gray);
     painter.drawRect(rect().adjusted(0, 0, -1, -1));
     
-    // Optionally show visit count as text for cells visited more than once
-    if (visitCount > 1) {
+    if (visitCount >= 1) {
         painter.setPen(Qt::black);
         painter.drawText(rect(), Qt::AlignCenter, QString::number(visitCount));
     }

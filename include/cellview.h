@@ -22,4 +22,4 @@ private:
     int visitCount;
 };
 
-#endif // CELLVIEW_H
+#endif

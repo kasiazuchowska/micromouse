@@ -7,54 +7,44 @@
 UI::UI(Game* game, QWidget* parent)
     : QWidget(parent), game(game) {
     
-    // Create main layout
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
     
-    // Create status label
-    statusLabel = new QLabel("Press Start to begin");
+    statusLabel = new QLabel("Nacisnij start aby rozpoczac");
     mainLayout->addWidget(statusLabel);
     
-    // Create grid layout for maze display
     gridLayout = new QGridLayout();
     gridLayout->setSpacing(1);
     mainLayout->addLayout(gridLayout);
     
-    // Create start button
     startButton = new QPushButton("Start");
     mainLayout->addWidget(startButton);
     
-    // Connect signals/slots
     connect(startButton, &QPushButton::clicked, [this]() {
         startButton->setEnabled(false);
-        statusLabel->setText("Mouse is exploring the maze...");
+        statusLabel->setText("Mysz szuka celu");
         this->game->start();
     });
     
     connect(game, &Game::update, this, &UI::render);
     connect(game, &Game::gameWon, this, &UI::handleGameWon);
     
-    // Create maze display
     createMazeDisplay();
     
-    // Set window properties
-    setWindowTitle("Mouse Maze");
+    setWindowTitle("Micromouse");
     resize(600, 600);
 }
 
 void UI::createMazeDisplay() {
-    // Clear existing grid
     QLayoutItem* item;
     while ((item = gridLayout->takeAt(0)) != nullptr) {
         delete item->widget();
         delete item;
     }
     
-    // Get grid dimensions
     Grid* grid = game->getGrid();
     int width = grid->getWidth();
     int height = grid->getHeight();
     
-    // Create cell views
     for (int y = 0; y < height; ++y) {
         for (int x = 0; x < width; ++x) {
             CellView* cellView = new CellView();
@@ -70,12 +60,10 @@ void UI::render() {
     int width = grid->getWidth();
     int height = grid->getHeight();
     
-    // Get mouse position and visited cells
     int mouseX = mouse->getX();
     int mouseY = mouse->getY();
     const auto& visited = mouse->getVisited();
     
-    // Update cell views
     for (int y = 0; y < height; ++y) {
         for (int x = 0; x < width; ++x) {
             Cell* cell = grid->getCell(x, y);
@@ -85,7 +73,6 @@ void UI::render() {
             cellView->setGoal(cell->isGoal);
             cellView->setMouse(x == mouseX && y == mouseY);
             
-            // Set visit count (instead of boolean visited state)
             int visitCount = 0;
             if (y < visited.size() && x < visited[y].size()) {
                 visitCount = visited[y][x];
@@ -96,7 +83,7 @@ void UI::render() {
 }
 
 void UI::handleGameWon() {
-    statusLabel->setText("Success! The mouse found the cheese!");
+    statusLabel->setText("WYGRANA!!!");
     startButton->setEnabled(true);
     startButton->setText("Restart");
 }

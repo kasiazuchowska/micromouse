@@ -28,4 +28,4 @@ private:
     void createMazeDisplay();
 };
 
-#endif // UI_H
+#endif
