@@ -1,57 +1,8 @@
 #include "ui.h"
+#include "cellview.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
-#include <QPainter>
-#include <QColor>
-
-class CellView : public QWidget {
-public:
-    CellView(QWidget* parent = nullptr) 
-        : QWidget(parent), isWall(false), isGoal(false), isMouse(false), visitCount(0) {
-        setMinimumSize(20, 20);
-        setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    }
-    
-    void setWall(bool value) { isWall = value; update(); }
-    void setGoal(bool value) { isGoal = value; update(); }
-    void setMouse(bool value) { isMouse = value; update(); }
-    void setVisitCount(int count) { visitCount = count; update(); }
-    
-protected:
-    void paintEvent(QPaintEvent* event) override {
-        QPainter painter(this);
-        
-        if (isWall) {
-            painter.fillRect(rect(), Qt::black);
-        } else if (isGoal) {
-            painter.fillRect(rect(), Qt::green);
-        } else if (isMouse) {
-            painter.fillRect(rect(), Qt::red);
-        } else if (visitCount > 0) {
-            // Create a gradient of blue based on visit count
-            // More visits = darker blue
-            int intensity = std::max(255 - (visitCount * 30), 100); // Don't go too dark
-            painter.fillRect(rect(), QColor(intensity, intensity, 255));
-        } else {
-            painter.fillRect(rect(), Qt::white);
-        }
-        
-        painter.setPen(Qt::gray);
-        painter.drawRect(rect().adjusted(0, 0, -1, -1));
-        
-        // Optionally show visit count as text for cells visited more than once
-        if (visitCount > 1) {
-            painter.setPen(Qt::black);
-            painter.drawText(rect(), Qt::AlignCenter, QString::number(visitCount));
-        }
-    }
-    
-private:
-    bool isWall;
-    bool isGoal;
-    bool isMouse;
-    int visitCount;
-};
+#include "game.h"
 
 UI::UI(Game* game, QWidget* parent)
     : QWidget(parent), game(game) {

@@ -1,5 +1,0 @@
-/home/katarzyna/studia/micromouse/build/CMakeFiles/micromouse.dir
-/home/katarzyna/studia/micromouse/build/CMakeFiles/edit_cache.dir
-/home/katarzyna/studia/micromouse/build/CMakeFiles/rebuild_cache.dir
-/home/katarzyna/studia/micromouse/build/CMakeFiles/micromouse_autogen_timestamp_deps.dir
-/home/katarzyna/studia/micromouse/build/CMakeFiles/micromouse_autogen.dir
