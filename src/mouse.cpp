@@ -91,6 +91,7 @@ int Mouse::findLeastVisitedDirection() {
 }
 
 void Mouse::move() {
+    //znajdz najrzadziej odwiedznego sasiada
     int leastVisitedDir = findLeastVisitedDirection();
     
     if (leastVisitedDir != -1) {
@@ -100,6 +101,7 @@ void Mouse::move() {
         return;
     }
 
+    //uzycie zmysly wechu do wyboru komorki blizej celu
     double smellIntensity = smell->detect();
     
     if (smellIntensity > 0.8) {
@@ -140,7 +142,8 @@ void Mouse::move() {
             return;
         }
     }
-    
+
+    //jezeli nic sie nie uda to skrecaj w lewo
     if (canMoveForward()) {
         turnRight();
         
