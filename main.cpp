@@ -5,7 +5,7 @@
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
     
-    Game game(30, 30);
+    Game game(25, 25);
     UI ui(&game);
     
     ui.show();
